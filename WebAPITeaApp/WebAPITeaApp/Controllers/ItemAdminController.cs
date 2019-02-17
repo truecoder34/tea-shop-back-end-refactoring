@@ -12,6 +12,7 @@ using AutoMapper;
 using WebAPITeaApp.Models;
 using WebAPITeaApp.Commands;
 using WebAPITeaApp.Repository;
+using WebAPITeaApp.Servicies.Translators;
 
 namespace WebAPITeaApp.Controllers
 {
@@ -27,15 +28,23 @@ namespace WebAPITeaApp.Controllers
         Item item = new Item();
         ICommandCommonResult result;
 
+        protected IMapper Mapper { get; private set; }
+        protected IMapperConfiguration Configuration { get; private set; }
+        protected MapperConfiguration MapperConfiguration { get; private set; }
+
         // Add new Item
         [HttpPost]
         [Route("items")]
         public HttpResponseMessage AddItem([FromBody] ItemDto itemDto)
         {
+            MapperConfiguration = new MapperConfiguration(c => Configuration = c);
+            Mapper = MapperConfiguration.CreateMapper();
+            var translator = new ItemDtoToItemModelTranslator(Configuration, Mapper);
+
             // Call command create
             try
             {
-                CreateItemCommand<ItemDto, Item> CreateItem = new CreateItemCommand<ItemDto, Item>(itemDto, item, repository);
+                CreateItemCommand<ItemDto, Item> CreateItem = new CreateItemCommand<ItemDto, Item>(itemDto, item, repository, translator);
                 result = CreateItem.Execute();
                 return Request.CreateResponse(HttpStatusCode.OK, result);
             }
@@ -51,9 +60,13 @@ namespace WebAPITeaApp.Controllers
         [Route("items/{id}")]
         public HttpResponseMessage UpdateItem(Guid id, [FromBody] ItemDto itemDto)
         {
+            MapperConfiguration = new MapperConfiguration(c => Configuration = c);
+            Mapper = MapperConfiguration.CreateMapper();
+            var translator = new ItemDtoToItemModelTranslator(Configuration, Mapper);
+
             try
             {
-                UpdateItemCommand<ItemDto, Item> UpdateItem = new UpdateItemCommand<ItemDto, Item>(itemDto, item, repository, id);
+                UpdateItemCommand<ItemDto, Item> UpdateItem = new UpdateItemCommand<ItemDto, Item>(itemDto, item, repository, id, translator);
                 result = UpdateItem.Execute();
                 return Request.CreateResponse(HttpStatusCode.OK, result);
             }

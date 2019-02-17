@@ -7,23 +7,26 @@ using System.Web;
 using WebAPITeaApp.Dto;
 using WebAPITeaApp.Models.DB;
 using WebAPITeaApp.Repository;
+using WebAPITeaApp.Translators;
 
 namespace WebAPITeaApp.Commands
 {
-    public class CreateItemCommand<DTO, MODEL> : Command
-        where DTO : EntityDto
-        where MODEL : Entity
+    public class CreateItemCommand<TDto, TEntity> : Command
+        where TDto : EntityDto
+        where TEntity : Entity
     {
-        public DTO Dto { get; set; }
-        public MODEL Model { get; set; }
-        public DbRepositorySQL<MODEL> Repository { get; set; }
+        private TDto _dto { get; set; }
+        private TEntity _model { get; set; }
+        private DbRepositorySQL<TEntity> _repository { get; set; }
+        private readonly AutomapperTranslator<TDto, TEntity> _translator;
         
 
-        public CreateItemCommand(DTO dto, MODEL model, DbRepositorySQL<MODEL> rep)
+        public CreateItemCommand(TDto dto, TEntity model, DbRepositorySQL<TEntity> rep, AutomapperTranslator<TDto, TEntity> trans)
         {
-            Dto = dto;
-            Model = model;
-            Repository = rep;
+            _dto = dto;
+            _model = model;
+            _repository = rep;
+            _translator = trans;
         }
 
         // execute method realization
@@ -31,12 +34,12 @@ namespace WebAPITeaApp.Commands
         {
             ICommandCommonResultData<Guid> result = new CommandResult<Guid>();
             // Transform from DTO type to MODEL type
-            MODEL itemToCreate = Mapper.Map<DTO, MODEL>(Dto);
+            TEntity itemToCreate = _translator.Translate(_dto);
             //Repository.
             try
             {
-                Repository.Create(itemToCreate);
-                Repository.Save();
+                _repository.Create(itemToCreate);
+                _repository.Save();
                 result.Result = true;
                 result.Message = "DB: Item created successfully";
                 result.Data = itemToCreate.GuidId;
@@ -47,8 +50,7 @@ namespace WebAPITeaApp.Commands
                 result.Result = false;
                 result.Message = "DB: Item creation Error";
             }
-            
-
+           
             return result;
         }       
     }

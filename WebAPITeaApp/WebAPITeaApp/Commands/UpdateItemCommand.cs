@@ -7,24 +7,27 @@ using System.Web;
 using WebAPITeaApp.Dto;
 using WebAPITeaApp.Models.DB;
 using WebAPITeaApp.Repository;
+using WebAPITeaApp.Translators;
 
 namespace WebAPITeaApp.Commands
 {
-    public class UpdateItemCommand<DTO, MODEL> : Command
-        where DTO : EntityDto
-        where MODEL : Entity
+    public class UpdateItemCommand<TDto, TEntity> : Command
+        where TDto : EntityDto
+        where TEntity : Entity
     {
-        public DTO Dto { get; set; }
-        public MODEL Model { get; set; }
-        public DbRepositorySQL<MODEL> Repository { get; set; }
-        public Guid Id { get; set; }
+        private TDto _dto { get; set; }
+        private TEntity _model { get; set; }
+        private DbRepositorySQL<TEntity> _repository { get; set; }
+        private Guid _id { get; set; }
+        private readonly AutomapperTranslator<TDto, TEntity> _translator;
 
-        public UpdateItemCommand(DTO dto, MODEL model, DbRepositorySQL<MODEL> rep, Guid id)
+        public UpdateItemCommand(TDto dto, TEntity model, DbRepositorySQL<TEntity> rep, Guid id, AutomapperTranslator<TDto, TEntity> trans)
         {
-            Dto = dto;
-            Model = model;
-            Repository = rep;
-            Id = id;
+            _dto = dto;
+            _model = model;
+            _repository = rep;
+            _id = id;
+            _translator = trans;
         }
 
         // execute method realization
@@ -32,12 +35,12 @@ namespace WebAPITeaApp.Commands
         {
             ICommandCommonResultData<Guid> result = new CommandResult<Guid>();
             // Transform from DTO type to MODEL type
-            MODEL itemToUpdate = Mapper.Map<DTO, MODEL>(Dto);
+            TEntity itemToUpdate = _translator.Translate(_dto);
             //Repository.
             try
             {
-                Repository.Update(itemToUpdate, Id);
-                Repository.Save();
+                _repository.Update(itemToUpdate, _id);
+                _repository.Save();
                 result.Result = true;
                 result.Message = "DB: Item updated successfully";
                 result.Data = itemToUpdate.GuidId;

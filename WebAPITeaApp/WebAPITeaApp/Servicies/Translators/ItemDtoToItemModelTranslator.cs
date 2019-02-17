@@ -29,8 +29,8 @@ namespace WebAPITeaApp.Servicies.Translators
                 .ForMember(m => m.Name,                     o => o.MapFrom(m => m.Name))
                 .ForMember(m => m.Description,              o => o.MapFrom(m => m.Description))
                 .ForMember(m => m.ImageLink,                o => o.MapFrom(m => m.ImageLink))
-                .ForMember(m => m.Category.CategoryId,      o => o.MapFrom(m => m.CategoryId))
-                .ForMember(m => m.Manufacter.ManufacterId,  o => o.MapFrom(m => m.ManufacterId));
+                .ForMember(m => m.Category == null ? (int?)null : m.Category.CategoryId, o => o.MapFrom(m => m.CategoryId))
+                .ForMember(m => m.Manufacter == null ? (int?)null : m.Manufacter.ManufacterId,  o => o.MapFrom(m => m.ManufacterId));
         }
     }
 }

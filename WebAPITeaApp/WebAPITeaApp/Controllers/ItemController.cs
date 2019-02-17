@@ -50,7 +50,6 @@ namespace WebAPITeaApp.Controllers
             {
                 throw e;
             }
-
             return result;
         }
 

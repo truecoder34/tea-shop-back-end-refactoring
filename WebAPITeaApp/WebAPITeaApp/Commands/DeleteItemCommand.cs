@@ -8,18 +8,19 @@ using WebAPITeaApp.Repository;
 
 namespace WebAPITeaApp.Commands
 {
-    public class DeleteItemCommand<MODEL> : Command
-        where MODEL : Entity
+    public class DeleteItemCommand<TEntity> : Command
+        where TEntity : Entity
     {
-        public MODEL Model { get; set; }
-        public DbRepositorySQL<MODEL> Repository { get; set; }
-        public Guid Id { get; set; }
+        private TEntity _model { get; set; }
+        private DbRepositorySQL<TEntity> _repository { get; set; }
+        private Guid _id { get; set; }
+        
 
-        public DeleteItemCommand(MODEL model, DbRepositorySQL<MODEL> rep, Guid id)
+        public DeleteItemCommand(TEntity model, DbRepositorySQL<TEntity> rep, Guid id)
         {
-            Model = model;
-            Repository = rep;
-            Id = id;
+            _model = model;
+            _repository = rep;
+            _id = id;
         }
 
         public override ICommandCommonResult Execute()
@@ -27,8 +28,8 @@ namespace WebAPITeaApp.Commands
             ICommandCommonResult result = new CommandResult();
             try
             {
-                Repository.Delete(Id);
-                Repository.Save();
+                _repository.Delete(_id);
+                _repository.Save();
                 result.Result = true;
                 result.Message = "DB: Item was deleted successfully";
             }
