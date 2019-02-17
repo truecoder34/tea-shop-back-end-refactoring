@@ -50,7 +50,7 @@ namespace WebAPITeaApp.Controllers
             {
                 throw e;
             }
-            return result;
+             return result;
         }
 
         /*
@@ -59,20 +59,21 @@ namespace WebAPITeaApp.Controllers
         */
         [HttpGet]
         [Route("items/{id}")]
-        public ItemDto GetItem(Guid id)
+        public ICommandCommonResult GetItem(Guid id)
         {
-            var bufItem = dbContext.Items.Where(b => b.GuidId == id).First();
-
-            ItemDto bufNote = new ItemDto();
-            bufNote.GuidIdOfItem = bufItem.GuidId;
-            bufNote.Cost = bufItem.Cost;
-            bufNote.Name = bufItem.Name;
-            bufNote.Description = bufItem.Description;
-            bufNote.ImageLink = bufItem.ImageLink;
-            bufNote.CategoryId = bufItem.Category.CategoryId;
-            bufNote.ManufacterId = bufItem.Manufacter.ManufacterId;
-            //ItemDto recievedFromDBItem = Mapper.Map<Item, ItemDto>(bufItem);
-            return bufNote;
+            MapperConfiguration = new MapperConfiguration(c => Configuration = c);
+            Mapper = MapperConfiguration.CreateMapper();
+            var translator = new ItemModelToItemDtoTranslator(Configuration, Mapper);
+            try
+            {
+                GetItemCommand<Item, ItemDto> GetItem = new GetItemCommand<Item, ItemDto>(item, itemDto, repository, translator, id);
+                result = GetItem.Execute();
+            }
+            catch(Exception e)
+            {
+                throw e;
+            } 
+            return result;
         }
 
     }

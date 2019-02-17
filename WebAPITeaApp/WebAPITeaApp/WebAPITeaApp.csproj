@@ -230,6 +230,7 @@
     <Compile Include="Commands\CommandResult.cs" />
     <Compile Include="Commands\CreateItemCommand.cs" />
     <Compile Include="Commands\DeleteItemCommand.cs" />
+    <Compile Include="Commands\GetItemCommand.cs" />
     <Compile Include="Commands\GetItemsListCommand.cs" />
     <Compile Include="Commands\ICommandCommonResult.cs" />
     <Compile Include="Commands\ICommandCoommonResultData.cs" />

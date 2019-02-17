@@ -23,7 +23,7 @@ namespace WebAPITeaApp.Servicies.Translators
             base.Configure();
 
             Mapping
-                .ForMember(m => m.GuidIdOfItem,         o => o.MapFrom(m => m.GuidId))
+                .ForMember(m => m.GuidId,         o => o.MapFrom(m => m.GuidId))
                 .ForMember(m => m.Cost,                 o => o.MapFrom(m => m.Cost))
                 .ForMember(m => m.Name,                 o => o.MapFrom(m => m.Name))
                 .ForMember(m => m.Description,          o => o.MapFrom(m => m.Description))
