@@ -11,9 +11,9 @@ using WebAPITeaApp.Translators;
 
 namespace WebAPITeaApp.Commands
 {
-    public class UpdateItemCommand<TDto, TEntity> : Command
-        where TDto : EntityDto
+    public class UpdateItemCommand<TEntity,TDto> : Command
         where TEntity : Entity
+        where TDto : EntityDto
     {
         private TDto _dto { get; set; }
         private TEntity _model { get; set; }
@@ -21,7 +21,7 @@ namespace WebAPITeaApp.Commands
         private Guid _id { get; set; }
         private readonly AutomapperTranslator<TDto, TEntity> _translator;
 
-        public UpdateItemCommand(TDto dto, TEntity model, DbRepositorySQL<TEntity> rep, Guid id, AutomapperTranslator<TDto, TEntity> trans)
+        public UpdateItemCommand(TEntity model, TDto dto, DbRepositorySQL<TEntity> rep, Guid id, AutomapperTranslator<TDto, TEntity> trans)
         {
             _dto = dto;
             _model = model;

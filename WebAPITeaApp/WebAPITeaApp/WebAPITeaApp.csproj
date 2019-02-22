@@ -275,6 +275,7 @@
     <Compile Include="Servicies\Translators\OrderModelToOrderDtoTranslator.cs" />
     <Compile Include="Servicies\Translators\UserInfoDtoToUserInfoModelTranslator.cs" />
     <Compile Include="Servicies\Translators\UserInfoModelToUserInfoDtoModel.cs" />
+    <Compile Include="Servicies\Translators\UserInfoModelToUserModelTranslator.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Translators\AutomapperTranslator.cs" />
     <Compile Include="Translators\ITranslator.cs" />

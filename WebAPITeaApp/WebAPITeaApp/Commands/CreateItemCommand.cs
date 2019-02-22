@@ -11,9 +11,9 @@ using WebAPITeaApp.Translators;
 
 namespace WebAPITeaApp.Commands
 {
-    public class CreateItemCommand<TDto, TEntity> : Command
-        where TDto : EntityDto
+    public class CreateItemCommand<TEntity, TDto> : Command
         where TEntity : Entity
+        where TDto : EntityDto
     {
         private TDto _dto { get; set; }
         private TEntity _model { get; set; }
@@ -21,7 +21,7 @@ namespace WebAPITeaApp.Commands
         private readonly AutomapperTranslator<TDto, TEntity> _translator;
         
 
-        public CreateItemCommand(TDto dto, TEntity model, DbRepositorySQL<TEntity> rep, AutomapperTranslator<TDto, TEntity> trans)
+        public CreateItemCommand(TEntity model, TDto dto, DbRepositorySQL<TEntity> rep, AutomapperTranslator<TDto, TEntity> trans)
         {
             _dto = dto;
             _model = model;

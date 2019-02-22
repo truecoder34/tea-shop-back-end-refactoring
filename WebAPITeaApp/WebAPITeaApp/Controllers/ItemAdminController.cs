@@ -44,11 +44,11 @@ namespace WebAPITeaApp.Controllers
             // Call command create
             try
             {
-                CreateItemCommand<ItemDto, Item> CreateItem = new CreateItemCommand<ItemDto, Item>(itemDto, item, repository, translator);
+                CreateItemCommand<Item, ItemDto> CreateItem = new CreateItemCommand<Item, ItemDto>(item, itemDto, repository, translator);
                 result = CreateItem.Execute();
                 return Request.CreateResponse(HttpStatusCode.OK, result);
             }
-            catch
+            catch(Exception e)
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, result);
             }
@@ -66,11 +66,11 @@ namespace WebAPITeaApp.Controllers
 
             try
             {
-                UpdateItemCommand<ItemDto, Item> UpdateItem = new UpdateItemCommand<ItemDto, Item>(itemDto, item, repository, id, translator);
+                UpdateItemCommand<Item, ItemDto> UpdateItem = new UpdateItemCommand<Item, ItemDto>(item, itemDto, repository, id, translator);
                 result = UpdateItem.Execute();
                 return Request.CreateResponse(HttpStatusCode.OK, result);
             }
-            catch
+            catch(Exception e)
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, result);
             }
@@ -88,7 +88,7 @@ namespace WebAPITeaApp.Controllers
                 result = DeleteItem.Execute();
                 return Request.CreateResponse(HttpStatusCode.OK, result);
             }
-            catch
+            catch(Exception e)
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, result);
             }

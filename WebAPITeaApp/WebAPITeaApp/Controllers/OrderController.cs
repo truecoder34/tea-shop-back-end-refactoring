@@ -7,6 +7,10 @@ using System.Net.Http;
 using System.Web.Http;
 using WebAPITeaApp.Dto;
 using WebAPITeaApp.Models.DB;
+using AutoMapper;
+using WebAPITeaApp.Commands;
+using WebAPITeaApp.Repository;
+using WebAPITeaApp.Servicies.Translators;
 
 namespace WebAPITeaApp.Controllers
 {
@@ -15,7 +19,17 @@ namespace WebAPITeaApp.Controllers
     public class OrderController : ApiController
     {
         //Connect to DataBase
-        TeaShopContext db = new TeaShopContext();
+        static TeaShopContext dbContext = new TeaShopContext();
+        DbRepositorySQL<Order> repositoryOrder = new DbRepositorySQL<Order>(dbContext);
+        DbRepositorySQL<User> repositoryUser = new DbRepositorySQL<User>(dbContext);
+        Order order = new Order();
+        OrderDto orderDto = new OrderDto();
+        ICommandCommonResult result;
+
+        protected IMapper Mapper { get; set; }
+        protected IMapperConfiguration Configuration { get; private set; }
+        protected MapperConfiguration MapperConfiguration { get; private set; }
+
 
         // POST: api/Order
         [HttpPost]
@@ -23,51 +37,44 @@ namespace WebAPITeaApp.Controllers
         [Authorize(Roles = "User")]
         public HttpResponseMessage AddOrder([FromBody]  OrderDto orderDto)
         {
+            MapperConfiguration = new MapperConfiguration(c => Configuration = c);
+            Mapper = MapperConfiguration.CreateMapper();
+            var translatorUser = new UserInfoModelToUserModelTranslator(Configuration, Mapper);
+            var translatorOrder = new OrderDtoToOrderModelTranlator(Configuration, Mapper);
+
             // Get INFO about user from USERINFO table by userGuid, and put it into User Table
             try
             {
-                UserInfo userInfo = db.UsersInfo.Where(b => b.UserId == orderDto.UserGuid).First();
-                User userMakingOrder = new User();
-                userMakingOrder.UserId = userInfo.UserId;
-                userMakingOrder.Name = userInfo.Name;
-                userMakingOrder.Surname = userInfo.Surname;
-                userMakingOrder.Email = userInfo.Email;
-                userMakingOrder.AccessMod = 0;
-
-                db.Users.Add(userMakingOrder);
-                db.SaveChanges();
+                UserInfo userInfo = dbContext.UsersInfo.Where(b => b.UserId == orderDto.UserGuid).First();
+                User userEntity = translatorUser.Translate(userInfo);
+                repositoryUser.Create(userEntity);
+                repositoryUser.Save();
             }
             catch
             {
                 return Request.CreateResponse(HttpStatusCode.BadRequest, "No personal information about user");
             }
-            
-
 
             // Put DATA in ORDERS table
-            Guid orderId = Guid.NewGuid();
-            Order bufferOrder = new Order();
-            bufferOrder.OrderId = orderId;
-            bufferOrder.DateTimeProperty = orderDto.DateTimeOfOrder;
-            bufferOrder.User = db.Users.Where(b => b.UserId == orderDto.UserGuid).First();
-            bufferOrder.State = "Создан";
-
-            foreach (var elem in orderDto.ItemsList)
-            { 
-                bufferOrder.Items.Add(db.Items.Where(b => b.GuidId == elem.GuidId).First());        
+            try
+            {
+                CreateItemCommand<Order, OrderDto> CreateOrder = new CreateItemCommand<Order, OrderDto>(order, orderDto, repositoryOrder, translatorOrder);
+                result = CreateOrder.Execute();
+                return Request.CreateResponse(HttpStatusCode.OK, result);
             }
-            db.Orders.Add(bufferOrder);
-            db.SaveChanges();
-
-            return Request.CreateResponse(HttpStatusCode.OK, "Ok");
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, result);
+            }
         }
+
 
         [HttpGet]
         [Route("orders/{id}")]
         [Authorize(Roles = "User")]
         public List<OrderDto> GetUsersOrders(Guid id)
         {
-            List<Order> order = db.Orders.Where(b => b.User.UserId == id).ToList();
+            List<Order> order = dbContext.Orders.Where(b => b.User.UserId == id).ToList();
             List<OrderDto> orderDtoList = new List<OrderDto>();
             foreach (Order elem in order)
             {
@@ -90,7 +97,7 @@ namespace WebAPITeaApp.Controllers
         [Route("orders")]
         public List<OrderDto> GetOrders()
         {
-            List<Order> order = db.Orders.ToList();           
+            List<Order> order = dbContext.Orders.ToList();           
             List<OrderDto> orderDtoList = new List<OrderDto>();
             foreach (Order elem in order)
             {
@@ -113,14 +120,14 @@ namespace WebAPITeaApp.Controllers
         [Route("orders/update")]
         public HttpResponseMessage updateState([FromBody] StateDto stateDto)
         {
-            Order orderFromDb = db.Orders.Where(b => b.OrderId == stateDto.OrderId).First();
+            Order orderFromDb = dbContext.Orders.Where(b => b.OrderId == stateDto.OrderId).First();
 
             orderFromDb.State = stateDto.State;
 
-            List<Order> bufferList = db.Orders.ToList();
+            List<Order> bufferList = dbContext.Orders.ToList();
 
             //db.Orders.Add(orderFromDb);
-            db.SaveChanges();
+            dbContext.SaveChanges();
 
             return Request.CreateResponse(HttpStatusCode.OK, "State Updated");
         }
