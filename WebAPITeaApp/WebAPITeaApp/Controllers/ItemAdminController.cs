@@ -66,7 +66,7 @@ namespace WebAPITeaApp.Controllers
 
             try
             {
-                UpdateItemCommand<Item, ItemDto> UpdateItem = new UpdateItemCommand<Item, ItemDto>(item, itemDto, repository, id, translator);
+                UpdateItemCommand<Item, ItemDto> UpdateItem = new UpdateItemCommand<Item, ItemDto>(item, itemDto, repository, translator, id);
                 result = UpdateItem.Execute();
                 return Request.CreateResponse(HttpStatusCode.OK, result);
             }

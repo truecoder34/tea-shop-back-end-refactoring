@@ -23,10 +23,10 @@ namespace WebAPITeaApp.Servicies.Translators
             base.Configure();
 
             Mapping
-                .ForMember(m => m.DateTimeOfOrder,          o => o.MapFrom(m => m.DateTimeProperty))
-                .ForMember(m => m.UserGuid,                 o => o.MapFrom(m => m.User.UserId))
+                .ForMember(m => m.DateTimeProperty,          o => o.MapFrom(m => m.DateTimeProperty))
+                .ForMember(m => m.UserId,                 o => o.MapFrom(m => m.User.UserId))
                 .ForMember(m => m.State,                    o => o.MapFrom(m => m.State))
-                .ForMember(m => m.ItemsList,                o => o.MapFrom(m => m.Items));
+                .ForMember(m => m.Items,                o => o.MapFrom(m => m.Items));
         }
     }
 }

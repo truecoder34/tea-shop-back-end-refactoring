@@ -8,10 +8,10 @@ namespace WebAPITeaApp.Dto
 {
     public class OrderDto : EntityDto
     {
-        public Guid UserGuid { get; set; }
-        public DateTime DateTimeOfOrder { get; set; }
+        public Guid UserId { get; set; }
+        public DateTime DateTimeProperty { get; set; }
 
-        public ICollection<Item> ItemsList { get; set; }
+        public ICollection<Item> Items { get; set; }
 
         public string State { get; set; }
 

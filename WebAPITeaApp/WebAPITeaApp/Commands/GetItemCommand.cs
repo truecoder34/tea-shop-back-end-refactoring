@@ -17,7 +17,7 @@ namespace WebAPITeaApp.Commands
     {
         private TEntity _model { get; set; }
         private TDto _dto { get; set; }
-        private DbRepositorySQL<TEntity> _repositosry { get; set; }
+        private DbRepositorySQL<TEntity> _repository { get; set; }
         private readonly AutomapperTranslator<TEntity, TDto> _translator;
         private Guid _id { get; set; }
 
@@ -25,7 +25,7 @@ namespace WebAPITeaApp.Commands
         {
             _model = model;
             _dto = dto;
-            _repositosry = rep;
+            _repository = rep;
             _translator = trans;
             _id = id;
         }
@@ -37,7 +37,7 @@ namespace WebAPITeaApp.Commands
            
             try
             {
-                var bufferEntity = _repositosry.GetNote(_id);
+                var bufferEntity = _repository.GetNote(_id);
                 result.Data = _translator.Translate(bufferEntity);
                 result.Result = true;
                 result.Message = "DB: data from table invoked successfully";

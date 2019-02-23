@@ -28,6 +28,11 @@ namespace WebAPITeaApp.Repository
             return _dbSet.ToList();
         }
 
+        public IEnumerable<TEntity> GetListById(Guid id)
+        {
+            return _dbSet.Where(b => b.GuidId == id).ToList();
+        }
+
         public TEntity GetNote(Guid id)
         {
             return _dbSet.Find(id);

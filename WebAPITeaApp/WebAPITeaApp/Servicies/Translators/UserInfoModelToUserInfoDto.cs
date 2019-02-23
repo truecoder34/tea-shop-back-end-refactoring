@@ -11,9 +11,9 @@ using WebAPITeaApp.Translators;
 namespace WebAPITeaApp.Servicies.Translators
 {
   
-    public class UserInfoModelToUserInfoDtoModel : AutomapperTranslator<UserInfo, UserInfoDto>
+    public class UserInfoModelToUserInfoDto : AutomapperTranslator<UserInfo, UserInfoDto>
     {
-        public UserInfoModelToUserInfoDtoModel(
+        public UserInfoModelToUserInfoDto(
             IMapperConfiguration configuration,
             IMapper mapper)
             : base(configuration, mapper)

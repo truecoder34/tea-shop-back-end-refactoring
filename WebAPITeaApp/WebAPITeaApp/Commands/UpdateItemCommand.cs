@@ -21,13 +21,13 @@ namespace WebAPITeaApp.Commands
         private Guid _id { get; set; }
         private readonly AutomapperTranslator<TDto, TEntity> _translator;
 
-        public UpdateItemCommand(TEntity model, TDto dto, DbRepositorySQL<TEntity> rep, Guid id, AutomapperTranslator<TDto, TEntity> trans)
+        public UpdateItemCommand(TEntity model, TDto dto, DbRepositorySQL<TEntity> rep,  AutomapperTranslator<TDto, TEntity> trans, Guid id)
         {
             _dto = dto;
             _model = model;
             _repository = rep;
-            _id = id;
             _translator = trans;
+            _id = id;
         }
 
         // execute method realization

@@ -45,7 +45,7 @@ namespace WebAPITeaApp.Controllers
             // Get INFO about user from USERINFO table by userGuid, and put it into User Table
             try
             {
-                UserInfo userInfo = dbContext.UsersInfo.Where(b => b.UserId == orderDto.UserGuid).First();
+                UserInfo userInfo = dbContext.UsersInfo.Where(b => b.UserId == orderDto.UserId).First();
                 User userEntity = translatorUser.Translate(userInfo);
                 repositoryUser.Create(userEntity);
                 repositoryUser.Save();
@@ -69,67 +69,88 @@ namespace WebAPITeaApp.Controllers
         }
 
 
+        /*
+         * Get api/orders/{id}
+            * Get all orders of current user
+            * Get all orders by user ID -- put it into list -- LIST OF ORDER
+            * Map each order from list to orderDto . form list of  orderDto
+        */
         [HttpGet]
         [Route("orders/{id}")]
         [Authorize(Roles = "User")]
-        public List<OrderDto> GetUsersOrders(Guid id)
+        public ICommandCommonResult GetUsersOrders(Guid id)
         {
-            List<Order> order = dbContext.Orders.Where(b => b.User.UserId == id).ToList();
-            List<OrderDto> orderDtoList = new List<OrderDto>();
-            foreach (Order elem in order)
+            MapperConfiguration = new MapperConfiguration(c => Configuration = c);
+            Mapper = MapperConfiguration.CreateMapper();
+            var translatorOrder = new OrderModelToOrderDtoTranslator(Configuration, Mapper);
+            try
             {
-                OrderDto orderDto = new OrderDto();
-                orderDto.DateTimeOfOrder = elem.DateTimeProperty;
-                orderDto.UserGuid = elem.User.UserId;
-                orderDto.State = elem.State;
-                orderDto.ItemsList = new List<Item>();
-                foreach (Item item in elem.Items)
-                {
-                    orderDto.ItemsList.Add(item);
-                }
-                orderDtoList.Add(orderDto);
+                GetItemsListById<Order, OrderDto> GetOrdersListById = new GetItemsListById<Order, OrderDto>(order, orderDto, repositoryOrder, translatorOrder, id);
+                result = GetOrdersListById.Execute();
             }
-            return orderDtoList;
+            catch(Exception e)
+            {
+                throw e;
+            }
+            return result;
         }
 
+
+        /*
+         * Get api/orders/
+            * ADMIN METHOD
+            * Get all orders of ALL USERS  
+        */
         [HttpGet]
         [Authorize(Roles = "Admin")]
         [Route("orders")]
-        public List<OrderDto> GetOrders()
+        public ICommandCommonResult GetOrders()
         {
-            List<Order> order = dbContext.Orders.ToList();           
-            List<OrderDto> orderDtoList = new List<OrderDto>();
-            foreach (Order elem in order)
+            MapperConfiguration = new MapperConfiguration(c => Configuration = c);
+            Mapper = MapperConfiguration.CreateMapper();
+            var translatorOrder = new OrderModelToOrderDtoTranslator(Configuration, Mapper);
+            try
             {
-                OrderDto orderDto = new OrderDto();
-                orderDto.DateTimeOfOrder = elem.DateTimeProperty;
-                orderDto.UserGuid = elem.User.UserId;
-                orderDto.State = elem.State;
-                orderDto.ItemsList = new List<Item>();
-                foreach (Item item in elem.Items)
-                {
-                    orderDto.ItemsList.Add(item);
-                }
-                orderDtoList.Add(orderDto);
+                GetItemsListCommand<Order, OrderDto> GetOrdersList = new GetItemsListCommand<Order, OrderDto>(order, orderDto, repositoryOrder, translatorOrder);
+                result = GetOrdersList.Execute();
             }
-            return orderDtoList;
+            catch(Exception e)
+            {
+                throw e;
+            }
+            return result;
         }
 
+
+        /*
+         * Post api/orders/update
+            * Change state for order
+        */
         [HttpPost]
         [Authorize(Roles = "Admin")]
         [Route("orders/update")]
         public HttpResponseMessage updateState([FromBody] StateDto stateDto)
         {
-            Order orderFromDb = dbContext.Orders.Where(b => b.OrderId == stateDto.OrderId).First();
+            MapperConfiguration = new MapperConfiguration(c => Configuration = c);
+            Mapper = MapperConfiguration.CreateMapper();
+            var translatorOrder = new OrderDtoToOrderModelTranlator(Configuration, Mapper);
+            var translatorOrderLocal = new OrderModelToOrderDtoTranslator(Configuration, Mapper);
 
-            orderFromDb.State = stateDto.State;
+            // !! Need to form new orderDto
+            Order currentOrder = dbContext.Orders.Where(b => b.OrderId == stateDto.OrderId).First();
+            currentOrder.State = stateDto.State;
+            orderDto = translatorOrderLocal.Translate(currentOrder);
 
-            List<Order> bufferList = dbContext.Orders.ToList();
-
-            //db.Orders.Add(orderFromDb);
-            dbContext.SaveChanges();
-
-            return Request.CreateResponse(HttpStatusCode.OK, "State Updated");
+            try
+            {
+                UpdateItemCommand<Order,OrderDto> UpdateOrderState  = new UpdateItemCommand<Order, OrderDto>(order, orderDto, repositoryOrder, translatorOrder, stateDto.OrderId);
+                result = UpdateOrderState.Execute();
+                return Request.CreateResponse(HttpStatusCode.OK, result);
+            }
+            catch (Exception e)
+            {
+                return Request.CreateResponse(HttpStatusCode.BadRequest, result);
+            }
         }
 
     }

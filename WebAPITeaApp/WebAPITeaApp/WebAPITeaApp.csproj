@@ -231,6 +231,7 @@
     <Compile Include="Commands\CreateItemCommand.cs" />
     <Compile Include="Commands\DeleteItemCommand.cs" />
     <Compile Include="Commands\GetItemCommand.cs" />
+    <Compile Include="Commands\GetItemsListById.cs" />
     <Compile Include="Commands\GetItemsListCommand.cs" />
     <Compile Include="Commands\ICommandCommonResult.cs" />
     <Compile Include="Commands\ICommandCoommonResultData.cs" />
@@ -274,7 +275,7 @@
     <Compile Include="Servicies\Translators\OrderDtoToOrderModelTranlator.cs" />
     <Compile Include="Servicies\Translators\OrderModelToOrderDtoTranslator.cs" />
     <Compile Include="Servicies\Translators\UserInfoDtoToUserInfoModelTranslator.cs" />
-    <Compile Include="Servicies\Translators\UserInfoModelToUserInfoDtoModel.cs" />
+    <Compile Include="Servicies\Translators\UserInfoModelToUserInfoDto.cs" />
     <Compile Include="Servicies\Translators\UserInfoModelToUserModelTranslator.cs" />
     <Compile Include="Startup.cs" />
     <Compile Include="Translators\AutomapperTranslator.cs" />
