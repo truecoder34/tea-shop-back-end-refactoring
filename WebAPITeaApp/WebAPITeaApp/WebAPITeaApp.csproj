@@ -241,7 +241,7 @@
     <Compile Include="Controllers\ItemController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\OrderController.cs" />
-    <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Controllers\UserInfoController.cs" />
     <Compile Include="Controllers\ValuesController.cs" />
     <Compile Include="Dto\EntityDto.cs" />
     <Compile Include="Dto\ItemDto.cs" />

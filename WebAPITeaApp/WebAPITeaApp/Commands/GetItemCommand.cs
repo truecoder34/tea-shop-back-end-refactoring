@@ -38,9 +38,18 @@ namespace WebAPITeaApp.Commands
             try
             {
                 var bufferEntity = _repository.GetNote(_id);
-                result.Data = _translator.Translate(bufferEntity);
-                result.Result = true;
-                result.Message = "DB: data from table invoked successfully";
+                if (bufferEntity != null)
+                {
+                    result.Data = _translator.Translate(bufferEntity);
+                    result.Result = true;
+                    result.Message = "DB: data from table invoked successfully";
+                }
+                else
+                {
+                    result.Result = false;
+                    result.Message = "DB: data  Error";
+                }
+                
             }
             catch
             {
