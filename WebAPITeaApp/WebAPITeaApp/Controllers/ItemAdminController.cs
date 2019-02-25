@@ -13,6 +13,7 @@ using WebAPITeaApp.Models;
 using WebAPITeaApp.Commands;
 using WebAPITeaApp.Repository;
 using WebAPITeaApp.Servicies.Translators;
+using NLog;
 
 namespace WebAPITeaApp.Controllers
 {
@@ -21,12 +22,19 @@ namespace WebAPITeaApp.Controllers
     [Authorize(Roles ="Admin")]
     public class ItemAdminController : ApiController
     {
+        private readonly ILogger _logger;
         //Connect to DataBase
         static TeaShopContext dbContext = new TeaShopContext();
         // repository object 
         DbRepositorySQL<Item> repository = new DbRepositorySQL<Item>(dbContext);
         Item item = new Item();
         ICommandCommonResult result;
+        
+
+        public ItemAdminController(ILogger logger)
+        {
+            _logger = logger;
+        }
 
         protected IMapper Mapper { get; private set; }
         protected IMapperConfiguration Configuration { get; private set; }
@@ -40,16 +48,19 @@ namespace WebAPITeaApp.Controllers
             MapperConfiguration = new MapperConfiguration(c => Configuration = c);
             Mapper = MapperConfiguration.CreateMapper();
             var translator = new ItemDtoToItemModelTranslator(Configuration, Mapper);
+            _logger.Info(DateTime.Now + Environment.NewLine + "ItemAdminController: POST add item method invoked");
 
             // Call command create
             try
             {
                 CreateItemCommand<Item, ItemDto> CreateItem = new CreateItemCommand<Item, ItemDto>(item, itemDto, repository, translator);
                 result = CreateItem.Execute();
+                _logger.Info(DateTime.Now + Environment.NewLine + "ItemAdminController: item created successfully");
                 return Request.CreateResponse(HttpStatusCode.OK, result);
             }
             catch(Exception e)
             {
+                _logger.Error(DateTime.Now + Environment.NewLine + "ItemAdminController: item was not created");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, result);
             }
         }
@@ -63,15 +74,17 @@ namespace WebAPITeaApp.Controllers
             MapperConfiguration = new MapperConfiguration(c => Configuration = c);
             Mapper = MapperConfiguration.CreateMapper();
             var translator = new ItemDtoToItemModelTranslator(Configuration, Mapper);
-
+            _logger.Info(DateTime.Now + Environment.NewLine + "ItemAdminController: PUT update item method invoked");
             try
             {
                 UpdateItemCommand<Item, ItemDto> UpdateItem = new UpdateItemCommand<Item, ItemDto>(item, itemDto, repository, translator, id);
                 result = UpdateItem.Execute();
+                _logger.Info(DateTime.Now + Environment.NewLine + "ItemAdminController: item updated successfully");
                 return Request.CreateResponse(HttpStatusCode.OK, result);
             }
             catch(Exception e)
             {
+                _logger.Error(DateTime.Now + Environment.NewLine + "ItemAdminController: item was not updated");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, result);
             }
         }
@@ -82,14 +95,17 @@ namespace WebAPITeaApp.Controllers
         [Route("items/{id}")]
         public HttpResponseMessage DeleteItem(Guid id)
         {
-            DeleteItemCommand<Item> DeleteItem = new DeleteItemCommand<Item>(item, repository, id);
+            _logger.Info(DateTime.Now + Environment.NewLine + "ItemAdminController: DELETE delete item method invoked");
             try
             {
+                DeleteItemCommand<Item> DeleteItem = new DeleteItemCommand<Item>(item, repository, id);
                 result = DeleteItem.Execute();
+                _logger.Info(DateTime.Now + Environment.NewLine + "ItemAdminController: item deleted successfully");
                 return Request.CreateResponse(HttpStatusCode.OK, result);
             }
             catch(Exception e)
             {
+                _logger.Error(DateTime.Now + Environment.NewLine + "ItemAdminController: item was not deleted");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, result);
             }
         }

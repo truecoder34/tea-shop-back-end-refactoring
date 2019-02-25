@@ -140,3 +140,17 @@ C:\Users\vladp\Desktop\Refactoring\tea-shop-back-end-refactoring\WebAPITeaApp\We
 C:\Users\vladp\Desktop\Refactoring\tea-shop-back-end-refactoring\WebAPITeaApp\WebAPITeaApp\obj\Debug\WebAPITeaApp.csproj.CopyComplete
 C:\Users\vladp\Desktop\Refactoring\tea-shop-back-end-refactoring\WebAPITeaApp\WebAPITeaApp\obj\Debug\WebAPITeaApp.dll
 C:\Users\vladp\Desktop\Refactoring\tea-shop-back-end-refactoring\WebAPITeaApp\WebAPITeaApp\obj\Debug\WebAPITeaApp.pdb
+C:\Users\vladp\Desktop\Refactoring\tea-shop-back-end-refactoring\WebAPITeaApp\WebAPITeaApp\bin\NLog.dll
+C:\Users\vladp\Desktop\Refactoring\tea-shop-back-end-refactoring\WebAPITeaApp\WebAPITeaApp\bin\NLog.xml
+C:\Users\vladp\Desktop\Refactoring\tea-shop-back-end-refactoring\WebAPITeaApp\WebAPITeaApp\bin\Ninject.dll
+C:\Users\vladp\Desktop\Refactoring\tea-shop-back-end-refactoring\WebAPITeaApp\WebAPITeaApp\bin\Ninject.Extensions.NamedScope.dll
+C:\Users\vladp\Desktop\Refactoring\tea-shop-back-end-refactoring\WebAPITeaApp\WebAPITeaApp\bin\Ninject.Web.Common.dll
+C:\Users\vladp\Desktop\Refactoring\tea-shop-back-end-refactoring\WebAPITeaApp\WebAPITeaApp\bin\Ninject.Web.Common.OwinHost.dll
+C:\Users\vladp\Desktop\Refactoring\tea-shop-back-end-refactoring\WebAPITeaApp\WebAPITeaApp\bin\Ninject.Web.WebApi.dll
+C:\Users\vladp\Desktop\Refactoring\tea-shop-back-end-refactoring\WebAPITeaApp\WebAPITeaApp\bin\Ninject.Web.WebApi.OwinHost.dll
+C:\Users\vladp\Desktop\Refactoring\tea-shop-back-end-refactoring\WebAPITeaApp\WebAPITeaApp\bin\Ninject.xml
+C:\Users\vladp\Desktop\Refactoring\tea-shop-back-end-refactoring\WebAPITeaApp\WebAPITeaApp\bin\Ninject.Extensions.NamedScope.xml
+C:\Users\vladp\Desktop\Refactoring\tea-shop-back-end-refactoring\WebAPITeaApp\WebAPITeaApp\bin\Ninject.Web.Common.xml
+C:\Users\vladp\Desktop\Refactoring\tea-shop-back-end-refactoring\WebAPITeaApp\WebAPITeaApp\bin\Ninject.Web.Common.OwinHost.xml
+C:\Users\vladp\Desktop\Refactoring\tea-shop-back-end-refactoring\WebAPITeaApp\WebAPITeaApp\bin\Ninject.Web.WebApi.xml
+C:\Users\vladp\Desktop\Refactoring\tea-shop-back-end-refactoring\WebAPITeaApp\WebAPITeaApp\bin\Ninject.Web.WebApi.OwinHost.xml

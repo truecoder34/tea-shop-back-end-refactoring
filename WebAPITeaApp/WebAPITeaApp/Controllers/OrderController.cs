@@ -11,6 +11,7 @@ using AutoMapper;
 using WebAPITeaApp.Commands;
 using WebAPITeaApp.Repository;
 using WebAPITeaApp.Servicies.Translators;
+using NLog;
 
 namespace WebAPITeaApp.Controllers
 {
@@ -18,6 +19,7 @@ namespace WebAPITeaApp.Controllers
     [Authorize]
     public class OrderController : ApiController
     {
+        private readonly ILogger _logger;
         //Connect to DataBase
         static TeaShopContext dbContext = new TeaShopContext();
         DbRepositorySQL<Order> repositoryOrder = new DbRepositorySQL<Order>(dbContext);
@@ -25,6 +27,11 @@ namespace WebAPITeaApp.Controllers
         Order order = new Order();
         OrderDto orderDto = new OrderDto();
         ICommandCommonResult result;
+
+        public OrderController(ILogger logger)
+        {
+            _logger = logger;
+        }
 
         protected IMapper Mapper { get; set; }
         protected IMapperConfiguration Configuration { get; private set; }
@@ -41,7 +48,8 @@ namespace WebAPITeaApp.Controllers
             Mapper = MapperConfiguration.CreateMapper();
             var translatorUser = new UserInfoModelToUserModelTranslator(Configuration, Mapper);
             var translatorOrder = new OrderDtoToOrderModelTranlator(Configuration, Mapper);
-
+            _logger.Info(DateTime.Now + Environment.NewLine + "OrderController: POST order method invoked");
+            
             // Get INFO about user from USERINFO table by userGuid, and put it into User Table
             try
             {
@@ -49,9 +57,12 @@ namespace WebAPITeaApp.Controllers
                 User userEntity = translatorUser.Translate(userInfo);
                 repositoryUser.Create(userEntity);
                 repositoryUser.Save();
+                _logger.Info(DateTime.Now + Environment.NewLine + "OrderController: user info extracted successfully");
+
             }
             catch
             {
+                _logger.Error(DateTime.Now + Environment.NewLine + "OrderController: user info was not extracted");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, "No personal information about user");
             }
 
@@ -60,10 +71,12 @@ namespace WebAPITeaApp.Controllers
             {
                 CreateItemCommand<Order, OrderDto> CreateOrder = new CreateItemCommand<Order, OrderDto>(order, orderDto, repositoryOrder, translatorOrder);
                 result = CreateOrder.Execute();
+                _logger.Info(DateTime.Now + Environment.NewLine + "OrderController: order created successfully");
                 return Request.CreateResponse(HttpStatusCode.OK, result);
             }
             catch (Exception e)
             {
+                _logger.Error(DateTime.Now + Environment.NewLine + "OrderController: order was not created");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, result);
             }
         }
@@ -83,13 +96,16 @@ namespace WebAPITeaApp.Controllers
             MapperConfiguration = new MapperConfiguration(c => Configuration = c);
             Mapper = MapperConfiguration.CreateMapper();
             var translatorOrder = new OrderModelToOrderDtoTranslator(Configuration, Mapper);
+            _logger.Info(DateTime.Now + Environment.NewLine + "OrderController: GET order by id method invoked");
             try
             {
                 GetItemsListById<Order, OrderDto> GetOrdersListById = new GetItemsListById<Order, OrderDto>(order, orderDto, repositoryOrder, translatorOrder, id);
                 result = GetOrdersListById.Execute();
+                _logger.Info(DateTime.Now + Environment.NewLine + "OrderController: order extracted successfully");
             }
             catch(Exception e)
             {
+                _logger.Error(DateTime.Now + Environment.NewLine + "OrderController: order was not extracted");
                 throw e;
             }
             return result;
@@ -109,13 +125,16 @@ namespace WebAPITeaApp.Controllers
             MapperConfiguration = new MapperConfiguration(c => Configuration = c);
             Mapper = MapperConfiguration.CreateMapper();
             var translatorOrder = new OrderModelToOrderDtoTranslator(Configuration, Mapper);
+            _logger.Info(DateTime.Now + Environment.NewLine + "OrderController: GET all orders method invoked");
             try
             {
                 GetItemsListCommand<Order, OrderDto> GetOrdersList = new GetItemsListCommand<Order, OrderDto>(order, orderDto, repositoryOrder, translatorOrder);
                 result = GetOrdersList.Execute();
+                _logger.Info(DateTime.Now + Environment.NewLine + "OrderController: orders extracted successfully");
             }
             catch(Exception e)
             {
+                _logger.Error(DateTime.Now + Environment.NewLine + "OrderController: orders was not extracted");
                 throw e;
             }
             return result;
@@ -135,6 +154,7 @@ namespace WebAPITeaApp.Controllers
             Mapper = MapperConfiguration.CreateMapper();
             var translatorOrder = new OrderDtoToOrderModelTranlator(Configuration, Mapper);
             var translatorOrderLocal = new OrderModelToOrderDtoTranslator(Configuration, Mapper);
+            _logger.Info(DateTime.Now + Environment.NewLine + "OrderController: POST update order state method invoked");
 
             // !! Need to form new orderDto
             Order currentOrder = dbContext.Orders.Where(b => b.OrderId == stateDto.OrderId).First();
@@ -145,10 +165,12 @@ namespace WebAPITeaApp.Controllers
             {
                 UpdateItemCommand<Order,OrderDto> UpdateOrderState  = new UpdateItemCommand<Order, OrderDto>(order, orderDto, repositoryOrder, translatorOrder, stateDto.OrderId);
                 result = UpdateOrderState.Execute();
+                _logger.Info(DateTime.Now + Environment.NewLine + "OrderController: order state updated successfully");
                 return Request.CreateResponse(HttpStatusCode.OK, result);
             }
             catch (Exception e)
             {
+                _logger.Error(DateTime.Now + Environment.NewLine + "OrderController: order state was not updated");
                 return Request.CreateResponse(HttpStatusCode.BadRequest, result);
             }
         }

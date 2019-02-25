@@ -1,0 +1,12 @@
+2019-02-25 12:58:29.3451|INFO|Trace|25.02.2019 12:58:29
+ItemController: GET all items method invoked
+2019-02-25 12:58:30.5493|INFO|Trace|25.02.2019 12:58:30
+ItemController: all items extracted successfully
+2019-02-25 16:13:16.5562|INFO|Trace|25.02.2019 16:13:16
+ItemController: GET all items method invoked
+2019-02-25 16:13:20.4582|INFO|Trace|25.02.2019 16:13:20
+ItemController: all items extracted successfully
+2019-02-25 16:22:25.1955|INFO|Trace|25.02.2019 16:22:25
+OrderController: GET all orders method invoked
+2019-02-25 16:22:28.8745|INFO|Trace|25.02.2019 16:22:28
+OrderController: orders extracted successfully
